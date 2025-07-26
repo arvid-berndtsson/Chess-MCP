@@ -1,51 +1,94 @@
-# Chess MCP Server - Fix TypeScript Setup
+# Chess MCP Server - Development Guidelines
 
-## Problem
-The Chess MCP project has unnecessary JavaScript wrapper files when we should be using TypeScript directly with `tsx`.
+## Development Guidelines
 
-## Task: Clean Up and Use TypeScript Directly
-
-1. **Delete all unnecessary wrapper files:**
-   - Delete `chess-mcp.js`
-   - Delete `chess-mcp-server.js` 
-   - Delete `chess-mcp.sh`
-   - Delete `test-mcp.js`
-
-2. **Update package.json:**
-   - Remove the `bin` field
-   - Keep existing scripts (`build`, `start`, `dev`, `cli`, `test`)
-
-3. **For MCP clients (Raycast/Claude), use this configuration:**
-   ```json
-   {
-     "mcpServers": {
-       "chess": {
-         "name": "Chess MCP",
-         "type": "stdio",
-         "command": "npx",
-         "args": ["tsx", "/Users/arvid/Private/Chess-MCP/src/index.ts"]
-       }
-     }
-   }
-   ```
-
-4. **Test the MCP server:**
-   ```bash
-   npx tsx src/index.ts
-   ```
-
-## Why This is Better
-- **Direct TypeScript execution** with `tsx` - no need for build step
-- **Cleaner project structure** - no wrapper files
-- **Standard MCP approach** - most MCP servers use `npx tsx`
-- **Better debugging** - direct source execution
-- **Simpler maintenance** - one less build step
-
-## Expected Result
-The MCP server should work directly with `npx tsx src/index.ts` without any JavaScript wrapper files.
-
-## Code Style
+### Code Style & Architecture
 - Use TypeScript for all source files
-- Use `tsx` for direct execution
-- Keep the project structure clean and minimal
-- Follow MCP best practices 
+- Use `tsx` for direct execution (no build step needed)
+- Follow modular design patterns
+- Maintain clean separation of concerns
+- Use proper TypeScript types and interfaces
+
+### AI Implementation
+- **Transposition Tables**: Already implemented with 1M entry limit and LRU eviction
+- **Iterative Deepening**: Progressive depth search with time management
+- **Memory Management**: LRU eviction, size limits, proper cleanup
+- **Search Algorithms**: Alpha-beta pruning with move ordering
+
+### Testing
+- All tests should pass before committing
+- Use Jest with ES modules configuration
+- Test both chess engine and AI functionality
+- Include performance and edge case tests
+
+### Performance Considerations
+- **Search Depth**: Maximum 8 plies for advanced levels
+- **Time Limits**: 5-second maximum for AI moves
+- **Memory Usage**: Controlled with size limits and eviction
+- **Caching**: Transposition tables and move ordering cache
+
+### MCP Integration
+- Use direct TypeScript execution: `npx tsx src/index.ts`
+- No JavaScript wrapper files needed
+- Standard MCP protocol implementation
+- Proper error handling and logging
+
+
+### Code Quality Standards
+- All functions should have proper TypeScript types
+- Use meaningful variable and function names
+- Include JSDoc comments for complex functions
+- Follow consistent formatting (use Prettier)
+- Handle errors gracefully with proper logging
+
+### Performance Benchmarks
+- **Search Speed**: 2-5x improvement through transposition tables
+- **Memory Usage**: Controlled and optimized
+- **Move Quality**: Better through iterative deepening
+- **Stability**: No crashes or infinite loops
+
+### Testing Requirements
+- **Unit Tests**: All core functionality covered
+- **Integration Tests**: MCP server functionality
+- **Performance Tests**: AI response times
+- **Edge Cases**: Checkmate, stalemate, special moves
+
+### Documentation
+- Keep README.md updated with current features
+- Include usage examples
+- Maintain architecture documentation
+
+### Git Workflow
+- Use descriptive commit messages
+- Test before committing
+- Keep commits focused and atomic
+- Update documentation with significant changes
+
+## Quick Commands
+```bash
+# Run tests
+npm test
+
+# Start MCP server
+npx tsx src/index.ts
+
+# Run specific test
+npm test -- --testPathPattern="chess-engine"
+
+# Development mode
+npm run dev
+```
+
+## MCP Client Configuration
+```json
+{
+  "mcpServers": {
+    "chess": {
+      "name": "Chess MCP",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["tsx", "/Users/arvid/Private/Chess-MCP/src/index.ts"]
+    }
+  }
+}
+```

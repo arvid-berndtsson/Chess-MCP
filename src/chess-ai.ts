@@ -353,7 +353,17 @@ export class SmartChessAI {
     return bestScore;
   }
 
-  private quiescenceSearch(board: any, alpha: number, beta: number): number {
+  private quiescenceSearch(
+    board: any,
+    alpha: number,
+    beta: number,
+    depth: number = 0,
+  ): number {
+    // Limit quiescence search depth to prevent infinite recursion
+    if (depth > 10) {
+      return this.evaluatePositionAdvanced(board);
+    }
+
     const standPat = this.evaluatePositionAdvanced(board);
 
     if (standPat >= beta) {
@@ -369,7 +379,7 @@ export class SmartChessAI {
     for (const capture of captures) {
       const boardCopy = this.copyBoard(board);
       this.makeMoveOnBoard(boardCopy, capture);
-      const score = -this.quiescenceSearch(boardCopy, -beta, -alpha);
+      const score = -this.quiescenceSearch(boardCopy, -beta, -alpha, depth + 1);
 
       if (score >= beta) {
         return beta;
@@ -420,6 +430,7 @@ export class SmartChessAI {
 
   // Advanced position evaluation
   private evaluatePositionAdvanced(board: any): number {
+    const squares = board.squares || board;
     let score = 0;
     let pieceCount: { w: number; b: number } = { w: 0, b: 0 };
     let pieceTypes: { w: Set<string>; b: Set<string> } = {
@@ -430,7 +441,7 @@ export class SmartChessAI {
     // Material and position evaluation
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece) {
           const pieceValue =
             this.pieceValues[piece.type as keyof typeof this.pieceValues] || 0;
@@ -451,19 +462,19 @@ export class SmartChessAI {
     }
 
     // Endgame evaluation
-    const endgameScore = this.evaluateEndgame(board, pieceCount, pieceTypes);
+    const endgameScore = this.evaluateEndgame(squares, pieceCount, pieceTypes);
     score += endgameScore;
 
     // Mobility evaluation
-    const mobilityScore = this.evaluateMobility(board);
+    const mobilityScore = this.evaluateMobility(squares);
     score += mobilityScore;
 
     // Pawn structure evaluation
-    const pawnScore = this.evaluatePawnStructure(board);
+    const pawnScore = this.evaluatePawnStructure(squares);
     score += pawnScore;
 
     // King safety evaluation
-    const kingSafetyScore = this.evaluateKingSafety(board);
+    const kingSafetyScore = this.evaluateKingSafety(squares);
     score += kingSafetyScore;
 
     return score;
@@ -471,11 +482,12 @@ export class SmartChessAI {
 
   // Basic position evaluation for level 2
   private evaluatePositionBasic(board: any, color: "w" | "b"): number {
+    const squares = board.squares || board;
     let score = 0;
 
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece) {
           const pieceValue =
             this.pieceValues[piece.type as keyof typeof this.pieceValues] || 0;
@@ -518,13 +530,35 @@ export class SmartChessAI {
 
   // Mobility evaluation
   private evaluateMobility(board: any): number {
-    const whiteMoves = this.getLegalMovesForBoard(board, "w").length;
-    const blackMoves = this.getLegalMovesForBoard(board, "b").length;
+    const squares = board.squares || board;
+    const whiteMoves = this.getLegalMovesForBoard(
+      {
+        squares,
+        turn: "w",
+        castling: { w: { k: true, q: true }, b: { k: true, q: true } },
+        enPassant: null,
+        halfMoveClock: 0,
+        fullMoveNumber: 1,
+      },
+      "w",
+    ).length;
+    const blackMoves = this.getLegalMovesForBoard(
+      {
+        squares,
+        turn: "b",
+        castling: { w: { k: true, q: true }, b: { k: true, q: true } },
+        enPassant: null,
+        halfMoveClock: 0,
+        fullMoveNumber: 1,
+      },
+      "b",
+    ).length;
     return (whiteMoves - blackMoves) * 10;
   }
 
   // Pawn structure evaluation
   private evaluatePawnStructure(board: any): number {
+    const squares = board.squares || board;
     let score = 0;
 
     // Doubled pawns penalty
@@ -532,7 +566,7 @@ export class SmartChessAI {
       let whitePawns = 0,
         blackPawns = 0;
       for (let rank = 0; rank < 8; rank++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece?.type === "p") {
           if (piece.color === "w") whitePawns++;
           else blackPawns++;
@@ -545,9 +579,9 @@ export class SmartChessAI {
     // Isolated pawns penalty
     for (let file = 0; file < 8; file++) {
       for (let rank = 0; rank < 8; rank++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece?.type === "p") {
-          if (this.isPawnIsolated(board, rank, file, piece.color)) {
+          if (this.isPawnIsolated(squares, rank, file, piece.color)) {
             score += piece.color === "w" ? -20 : 20;
           }
         }
@@ -559,6 +593,7 @@ export class SmartChessAI {
 
   // King safety evaluation
   private evaluateKingSafety(board: any): number {
+    const squares = board.squares || board;
     let score = 0;
 
     // Find kings
@@ -566,7 +601,7 @@ export class SmartChessAI {
       blackKing = null;
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece?.type === "k") {
           if (piece.color === "w") whiteKing = { rank, file };
           else blackKing = { rank, file };
@@ -636,11 +671,12 @@ export class SmartChessAI {
 
   // Check if king is in check
   private isKingInCheck(board: any, color: "w" | "b"): boolean {
+    const squares = board.squares || board;
     // Find king
     let kingPos = null;
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece?.type === "k" && piece.color === color) {
           kingPos = { rank, file };
           break;
@@ -654,11 +690,11 @@ export class SmartChessAI {
     const opponentColor = color === "w" ? "b" : "w";
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece && piece.color === opponentColor) {
           if (
             this.canPieceAttackSquare(
-              board,
+              squares,
               rank,
               file,
               kingPos.rank,
@@ -702,6 +738,7 @@ export class SmartChessAI {
     file: number,
     color: "w" | "b",
   ): boolean {
+    const squares = board.squares || board;
     const direction = color === "w" ? -1 : 1;
 
     // Check adjacent files
@@ -713,7 +750,7 @@ export class SmartChessAI {
       if (adjFile === file) continue;
 
       for (let r = 0; r < 8; r++) {
-        const piece = board[r][adjFile];
+        const piece = squares[r][adjFile];
         if (piece?.type === "p" && piece.color === color) {
           return false; // Found friendly pawn on adjacent file
         }
@@ -770,13 +807,16 @@ export class SmartChessAI {
   }
 
   private boardToFEN(board: any): string {
+    // Handle both direct board arrays and ChessBoard objects
+    const squares = board.squares || board;
+
     // Simplified FEN generation for transposition table
     let fen = "";
     let emptyCount = 0;
 
     for (let rank = 7; rank >= 0; rank--) {
       for (let file = 0; file < 8; file++) {
-        const piece = board[rank][file];
+        const piece = squares[rank][file];
         if (piece === null) {
           emptyCount++;
         } else {
@@ -805,22 +845,24 @@ export class SmartChessAI {
   }
 
   private copyBoard(board: ChessBoard): ChessBoard {
+    const squares = board.squares || board;
     return {
       ...board,
-      squares: board.squares.map((rank: any[]) =>
+      squares: squares.map((rank: any[]) =>
         rank.map((piece) => (piece ? { ...piece } : null)),
       ),
     };
   }
 
   private makeMoveOnBoard(board: any, move: ChessMove): void {
+    const squares = board.squares || board;
     const fromRank = 8 - parseInt(move.from[1]);
     const fromFile = move.from.charCodeAt(0) - 97;
     const toRank = 8 - parseInt(move.to[1]);
     const toFile = move.to.charCodeAt(0) - 97;
 
-    board[toRank][toFile] = board[fromRank][fromFile];
-    board[fromRank][fromFile] = null;
+    squares[toRank][toFile] = squares[fromRank][fromFile];
+    squares[fromRank][fromFile] = null;
   }
 
   private getLegalMovesForBoard(
@@ -828,9 +870,15 @@ export class SmartChessAI {
     color: "w" | "b",
   ): ChessMove[] {
     const moves: ChessMove[] = [];
-    const squares = board.squares;
+    const squares = board.squares || board;
+
+    // Ensure squares is a valid 2D array
+    if (!Array.isArray(squares) || squares.length === 0) {
+      return moves;
+    }
 
     for (let rank = 0; rank < 8; rank++) {
+      if (!Array.isArray(squares[rank])) continue;
       for (let file = 0; file < 8; file++) {
         const piece = squares[rank][file];
         if (piece && piece.color === color) {
