@@ -504,15 +504,28 @@ export class ChessMCPServer {
 
     const board = this.chessEngine.getBoard();
     const gameState = this.chessEngine.getGameState();
+    
+    // Debug: Log the current state
+    console.error(`[DEBUG] AI Move - Legal moves: ${legalMoves.length}, Turn: ${gameState.turn}, FEN: ${gameState.fen}`);
+    
     const aiMove = this.chessAI.chooseMove(
       legalMoves,
       board.squares,
       gameState.turn,
     );
 
+    console.error(`[DEBUG] AI generated move: ${aiMove.from}-${aiMove.to}, Object:`, aiMove);
+
+    // Debug: Check if the move is in legal moves
+    const isLegal = legalMoves.some(m => m.from === aiMove.from && m.to === aiMove.to);
+    console.error(`[DEBUG] Is AI move in legal moves: ${isLegal}`);
+
     const success = this.chessEngine.makeMove(aiMove);
 
+    console.error(`[DEBUG] AI move execution success: ${success}`);
+
     if (!success) {
+      console.error(`[DEBUG] AI move failed! Move: ${aiMove.from}-${aiMove.to}, Legal moves: ${legalMoves.map(m => `${m.from}${m.to}`).join(', ')}`);
       throw new Error("AI failed to make a valid move");
     }
 
