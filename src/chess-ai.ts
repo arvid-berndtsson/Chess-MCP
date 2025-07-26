@@ -10,17 +10,8 @@ export class ChessAI {
   }
 
   chooseMove(moves: ChessMove[], board: any, color: "w" | "b"): ChessMove {
-    // Convert the board format to ChessBoard format for SmartChessAI
-    const chessBoard: ChessBoard = {
-      squares: board,
-      turn: color,
-      castling: { w: { k: true, q: true }, b: { k: true, q: true } },
-      enPassant: null,
-      halfMoveClock: 0,
-      fullMoveNumber: 1,
-    };
-
-    return this.smartAI.chooseMove(chessBoard, this.smartAI.getLevel());
+    // Use the provided legal moves instead of generating our own
+    return this.smartAI.chooseMoveFromMoves(moves, board, color, this.smartAI.getLevel());
   }
 
   setLevel(level: number): void {
@@ -186,6 +177,28 @@ export class SmartChessAI {
     }
   }
 
+  public chooseMoveFromMoves(moves: ChessMove[], board: any, color: "w" | "b", level: number): ChessMove {
+    this.resetSearchStats();
+
+    // Convert board to ChessBoard format
+    const chessBoard: ChessBoard = {
+      squares: board,
+      turn: color,
+      castling: { w: { k: true, q: true }, b: { k: true, q: true } },
+      enPassant: null,
+      halfMoveClock: 0,
+      fullMoveNumber: 1,
+    };
+
+    if (level === 1) {
+      return this.chooseSmartRandomMove(moves, chessBoard, color);
+    } else if (level === 2) {
+      return this.choosePositionalMove(moves, chessBoard, color);
+    } else {
+      return this.chooseAdvancedMoveFromMoves(moves, board, color, level);
+    }
+  }
+
   // Smart random move that avoids obvious blunders
   private chooseSmartRandomMove(
     moves: ChessMove[],
@@ -246,6 +259,44 @@ export class SmartChessAI {
 
       const moveScores = moves.map((move) => {
         const boardCopy = this.copyBoard(board);
+        this.makeMoveOnBoard(boardCopy.squares, move);
+        const score = -this.iterativeMinimax(
+          boardCopy.squares,
+          depth - 1,
+          -Infinity,
+          Infinity,
+          false,
+        );
+        return { move, score };
+      });
+
+      // Sort by score and update best move
+      moveScores.sort((a, b) => b.score - a.score);
+      if (moveScores.length > 0) {
+        bestMove = moveScores[0].move;
+        bestScore = moveScores[0].score;
+      }
+
+      // Early exit if we found a winning move
+      if (bestScore > 9000) break;
+    }
+
+    return bestMove;
+  }
+
+  private chooseAdvancedMoveFromMoves(moves: ChessMove[], board: any, color: "w" | "b", level: number): ChessMove {
+    if (moves.length === 0) return moves[0];
+
+    // Use iterative deepening with time management
+    const maxDepth = Math.min(level + 2, 8); // Cap at 8 plies
+    let bestMove = moves[0];
+    let bestScore = -Infinity;
+
+    for (let depth = 1; depth <= maxDepth; depth++) {
+      if (this.isTimeUp()) break;
+
+      const moveScores = moves.map((move) => {
+        const boardCopy = this.copyBoard({ squares: board, turn: color } as ChessBoard);
         this.makeMoveOnBoard(boardCopy.squares, move);
         const score = -this.iterativeMinimax(
           boardCopy.squares,
