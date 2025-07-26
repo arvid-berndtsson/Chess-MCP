@@ -1,0 +1,30 @@
+{
+  "name": "chess-mcp",
+  "version": "1.0.0",
+  "description": "A Model Context Protocol server for playing chess",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "cli": "tsx src/cli.ts",
+    "test": "jest"
+  },
+  "keywords": ["mcp", "chess", "game", "protocol"],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "chess.js": "^1.0.0-beta.6",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "tsx": "^4.6.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.0"
+  }
+} 
