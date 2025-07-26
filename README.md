@@ -84,6 +84,23 @@ The chess MCP can be integrated into any MCP-compatible client:
 npm start
 ```
 
+## 📚 Documentation
+
+For detailed documentation, see the [docs](./docs/) folder:
+
+- **[Documentation Overview](./docs/README.md)** - Complete documentation index
+- **[Quick Start Guide](./docs/quick-start.md)** - Get up and running quickly
+- **[User Guide](./docs/user-guide.md)** - Complete user manual
+- **[Developer Guide](./docs/developer-guide.md)** - For developers and contributors
+- **[API Reference](./docs/api-reference.md)** - Complete API documentation
+- **[Architecture](./docs/architecture.md)** - System architecture and design
+- **[AI Implementation](./docs/ai-implementation.md)** - Chess AI details
+- **[Testing Guide](./docs/testing.md)** - Testing and quality assurance
+- **[Performance Guide](./docs/performance.md)** - Performance optimization
+- **[Project Analysis](./docs/project-analysis.md)** - Detailed project analysis
+- **[MCP Setup](./docs/mcp-setup.md)** - Model Context Protocol setup
+- **[Cool Features](./docs/cool-features.md)** - Advanced features showcase
+
 ## 🎮 Available Commands
 
 ### Basic Game Commands

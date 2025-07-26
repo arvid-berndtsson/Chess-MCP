@@ -102,14 +102,16 @@ Once configured, you can use chess commands in your AI assistant:
 
 ### ❌ MCP server not responding
 
-**Solution**: 
+**Solution**:
+
 1. Check the path in your MCP configuration
 2. Ensure you're using the correct command: `npx tsx src/index.ts`
 3. Test with `npx tsx test-mcp.ts`
 
 ### ❌ Permission denied errors
 
-**Solution**: 
+**Solution**:
+
 ```bash
 # Make scripts executable
 chmod +x src/index.ts
@@ -119,6 +121,7 @@ chmod +x src/cli.ts
 ## Quick Commands Reference
 
 ### Basic Game Commands
+
 ```bash
 # Start new game
 chess> mode human-vs-ai 3
@@ -138,6 +141,7 @@ chess> analyze
 ```
 
 ### MCP Commands
+
 ```bash
 # Start MCP server
 npx tsx src/index.ts
@@ -165,4 +169,4 @@ npx tsx test-chess.ts
 
 **🎉 You're ready to play chess with AI!**
 
-The Chess MCP server is now configured and ready to use. You can play chess through your AI assistant or use the interactive CLI for a traditional chess experience. 
+The Chess MCP server is now configured and ready to use. You can play chess through your AI assistant or use the interactive CLI for a traditional chess experience.

@@ -5,11 +5,13 @@
 ### Core Methods
 
 #### `start_new_game`
+
 Starts a new chess game.
 
 **Parameters**: None
 
-**Returns**: 
+**Returns**:
+
 ```typescript
 {
   success: boolean;
@@ -19,6 +21,7 @@ Starts a new chess game.
 ```
 
 **Example**:
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -32,9 +35,11 @@ Starts a new chess game.
 ```
 
 #### `make_move`
+
 Makes a move on the chess board.
 
 **Parameters**:
+
 ```typescript
 {
   move: string; // Coordinate notation (e.g., "e2e4")
@@ -42,6 +47,7 @@ Makes a move on the chess board.
 ```
 
 **Returns**:
+
 ```typescript
 {
   success: boolean;
@@ -52,6 +58,7 @@ Makes a move on the chess board.
 ```
 
 **Example**:
+
 ```json
 {
   "jsonrpc": "2.0",
@@ -67,26 +74,30 @@ Makes a move on the chess board.
 ```
 
 #### `get_board_state`
+
 Returns the current board state.
 
 **Parameters**: None
 
 **Returns**:
+
 ```typescript
 {
   board: ChessBoard;
   fen: string;
   gameStatus: GameStatus;
-  currentPlayer: 'w' | 'b';
+  currentPlayer: "w" | "b";
 }
 ```
 
 #### `get_legal_moves`
+
 Returns all legal moves for the current position.
 
 **Parameters**: None
 
 **Returns**:
+
 ```typescript
 {
   moves: ChessMove[];
@@ -95,11 +106,13 @@ Returns all legal moves for the current position.
 ```
 
 #### `analyze_position`
+
 Analyzes the current position.
 
 **Parameters**: None
 
 **Returns**:
+
 ```typescript
 {
   evaluation: number;
@@ -110,9 +123,11 @@ Analyzes the current position.
 ```
 
 #### `ai_move`
+
 Gets an AI move for the current position.
 
 **Parameters**:
+
 ```typescript
 {
   level?: number; // AI difficulty (1-5, default: 3)
@@ -120,6 +135,7 @@ Gets an AI move for the current position.
 ```
 
 **Returns**:
+
 ```typescript
 {
   move: ChessMove;
@@ -129,11 +145,13 @@ Gets an AI move for the current position.
 ```
 
 #### `undo_move`
+
 Undoes the last move.
 
 **Parameters**: None
 
 **Returns**:
+
 ```typescript
 {
   success: boolean;
@@ -143,11 +161,13 @@ Undoes the last move.
 ```
 
 #### `reset_game`
+
 Resets the game to the starting position.
 
 **Parameters**: None
 
 **Returns**:
+
 ```typescript
 {
   success: boolean;
@@ -159,11 +179,12 @@ Resets the game to the starting position.
 ## Type Definitions
 
 ### ChessBoard
+
 ```typescript
 interface ChessBoard {
   squares: (ChessPiece | null)[][];
   fen: string;
-  turn: 'w' | 'b';
+  turn: "w" | "b";
   castling: string;
   enPassant: string | null;
   halfMoveClock: number;
@@ -172,21 +193,23 @@ interface ChessBoard {
 ```
 
 ### ChessPiece
+
 ```typescript
 interface ChessPiece {
-  type: 'p' | 'n' | 'b' | 'r' | 'q' | 'k';
-  color: 'w' | 'b';
+  type: "p" | "n" | "b" | "r" | "q" | "k";
+  color: "w" | "b";
   square: string;
 }
 ```
 
 ### ChessMove
+
 ```typescript
 interface ChessMove {
   from: string;
   to: string;
   piece: string;
-  color: 'w' | 'b';
+  color: "w" | "b";
   san?: string;
   flags?: string;
   promotion?: string;
@@ -194,6 +217,7 @@ interface ChessMove {
 ```
 
 ### GameStatus
+
 ```typescript
 interface GameStatus {
   isCheck: boolean;
@@ -207,6 +231,7 @@ interface GameStatus {
 ```
 
 ### MaterialCount
+
 ```typescript
 interface MaterialCount {
   white: {
@@ -233,6 +258,7 @@ interface MaterialCount {
 ### ChessEngine Class
 
 #### Constructor
+
 ```typescript
 constructor(fen?: string)
 ```
@@ -240,44 +266,53 @@ constructor(fen?: string)
 #### Methods
 
 ##### `makeMove(move: string): boolean`
+
 Makes a move on the board.
 
 **Parameters**:
+
 - `move`: Move in coordinate notation
 
 **Returns**: `boolean` - Success status
 
 ##### `getBoard(): ChessBoard`
+
 Returns the current board state.
 
 **Returns**: `ChessBoard` - Current board
 
 ##### `getLegalMoves(): ChessMove[]`
+
 Returns all legal moves.
 
 **Returns**: `ChessMove[]` - Array of legal moves
 
 ##### `analyzePosition(): PositionAnalysis`
+
 Analyzes the current position.
 
 **Returns**: `PositionAnalysis` - Analysis results
 
 ##### `isGameOver(): boolean`
+
 Checks if the game is over.
 
 **Returns**: `boolean` - Game over status
 
 ##### `getGameStatus(): GameStatus`
+
 Returns detailed game status.
 
 **Returns**: `GameStatus` - Game status
 
 ##### `getFEN(): string`
+
 Returns FEN notation.
 
 **Returns**: `string` - FEN string
 
 ##### `reset(): void`
+
 Resets the game.
 
 ## AI API
@@ -285,39 +320,47 @@ Resets the game.
 ### SmartChessAI Class
 
 #### Constructor
+
 ```typescript
-constructor()
+constructor();
 ```
 
 #### Methods
 
 ##### `chooseMove(board: ChessBoard, level: number): ChessMove`
+
 Chooses the best move for the given position.
 
 **Parameters**:
+
 - `board`: Current board state
 - `level`: AI difficulty (1-5)
 
 **Returns**: `ChessMove` - Best move
 
 ##### `evaluatePosition(board: ChessBoard): number`
+
 Evaluates a position.
 
 **Parameters**:
+
 - `board`: Board to evaluate
 
 **Returns**: `number` - Position score
 
 ##### `getMoveAnalysis(board: ChessBoard, level: number): MoveAnalysis`
+
 Analyzes all possible moves.
 
 **Parameters**:
+
 - `board`: Current board
 - `level`: AI level
 
 **Returns**: `MoveAnalysis` - Move analysis
 
 ### MoveAnalysis
+
 ```typescript
 interface MoveAnalysis {
   moves: {
@@ -338,27 +381,35 @@ interface MoveAnalysis {
 #### Methods
 
 ##### `displayBoard(board: ChessBoard): void`
+
 Displays the chess board.
 
 **Parameters**:
+
 - `board`: Board to display
 
 ##### `displayAnalysis(analysis: PositionAnalysis): void`
+
 Displays position analysis.
 
 **Parameters**:
+
 - `analysis`: Analysis to display
 
 ##### `displayMenu(): void`
+
 Displays the main menu.
 
 ##### `displayHelp(): void`
+
 Displays help information.
 
 ##### `displayGameStatus(status: GameStatus): void`
+
 Displays game status.
 
 **Parameters**:
+
 - `status`: Game status to display
 
 ## Error Handling
@@ -366,31 +417,34 @@ Displays game status.
 ### Error Types
 
 #### InvalidMoveError
+
 ```typescript
 class InvalidMoveError extends Error {
   constructor(move: string, reason: string) {
     super(`Invalid move ${move}: ${reason}`);
-    this.name = 'InvalidMoveError';
+    this.name = "InvalidMoveError";
   }
 }
 ```
 
 #### GameOverError
+
 ```typescript
 class GameOverError extends Error {
   constructor(status: GameStatus) {
     super(`Game is over: ${status}`);
-    this.name = 'GameOverError';
+    this.name = "GameOverError";
   }
 }
 ```
 
 #### AIError
+
 ```typescript
 class AIError extends Error {
   constructor(message: string) {
     super(`AI error: ${message}`);
-    this.name = 'AIError';
+    this.name = "AIError";
   }
 }
 ```
@@ -410,6 +464,7 @@ All MCP methods return error responses in this format:
 ```
 
 **Common Error Codes**:
+
 - `400`: Invalid move
 - `401`: Game over
 - `402`: Invalid AI level
@@ -418,6 +473,7 @@ All MCP methods return error responses in this format:
 ## Configuration
 
 ### MCP Server Configuration
+
 ```typescript
 interface MCPConfig {
   name: string;
@@ -429,6 +485,7 @@ interface MCPConfig {
 ```
 
 ### Tool Definitions
+
 ```typescript
 interface Tool {
   name: string;
@@ -448,32 +505,32 @@ interface Tool {
 ```typescript
 // 1. Start new game
 const startResponse = await mcpServer.handleRequest({
-  method: 'tools/call',
-  params: { name: 'start_new_game' }
+  method: "tools/call",
+  params: { name: "start_new_game" },
 });
 
 // 2. Make opening move
 const moveResponse = await mcpServer.handleRequest({
-  method: 'tools/call',
+  method: "tools/call",
   params: {
-    name: 'make_move',
-    arguments: { move: 'e2e4' }
-  }
+    name: "make_move",
+    arguments: { move: "e2e4" },
+  },
 });
 
 // 3. Get AI move
 const aiResponse = await mcpServer.handleRequest({
-  method: 'tools/call',
+  method: "tools/call",
   params: {
-    name: 'ai_move',
-    arguments: { level: 3 }
-  }
+    name: "ai_move",
+    arguments: { level: 3 },
+  },
 });
 
 // 4. Analyze position
 const analysisResponse = await mcpServer.handleRequest({
-  method: 'tools/call',
-  params: { name: 'analyze_position' }
+  method: "tools/call",
+  params: { name: "analyze_position" },
 });
 ```
 
@@ -482,15 +539,15 @@ const analysisResponse = await mcpServer.handleRequest({
 ```typescript
 try {
   const response = await mcpServer.handleRequest({
-    method: 'tools/call',
+    method: "tools/call",
     params: {
-      name: 'make_move',
-      arguments: { move: 'e2e5' } // Invalid move
-    }
+      name: "make_move",
+      arguments: { move: "e2e5" }, // Invalid move
+    },
   });
 } catch (error) {
   if (error.code === 400) {
-    console.log('Invalid move:', error.message);
+    console.log("Invalid move:", error.message);
   }
 }
 ```
@@ -498,6 +555,7 @@ try {
 ## Performance Considerations
 
 ### Response Times
+
 - **Move validation**: <1ms
 - **Board state retrieval**: <1ms
 - **Legal move generation**: <5ms
@@ -505,13 +563,15 @@ try {
 - **AI move generation**: 50-1000ms (depends on level)
 
 ### Memory Usage
+
 - **Board representation**: ~1KB
 - **Move list**: ~10KB
 - **AI search tree**: 1-10MB (depends on depth)
 
 ### Best Practices
+
 1. **Cache board states** for repeated requests
 2. **Limit AI search depth** for faster responses
 3. **Use appropriate AI levels** for use case
 4. **Handle errors gracefully** with proper fallbacks
-5. **Monitor memory usage** for long-running sessions 
+5. **Monitor memory usage** for long-running sessions

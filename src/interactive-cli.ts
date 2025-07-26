@@ -1,8 +1,7 @@
 import readline from "readline";
 import { ChessEngine } from "./chess-engine.js";
 import { ChessUI } from "./chess-ui.js";
-import { ChessAI } from "./chess-ai.js";
-import { SmartChessAI } from "./smart-chess-ai.js";
+import { ChessAI, SmartChessAI } from "./chess-ai.js";
 import type { GameMode } from "./types.js";
 
 export class InteractiveCLI {
@@ -286,11 +285,7 @@ export class InteractiveCLI {
     const board = this.chessEngine.getBoard();
     const gameState = this.chessEngine.getGameState();
     // Use smart AI for better moves
-    const aiMove = this.smartAI.chooseMove(
-      legalMoves,
-      board.squares,
-      gameState.turn,
-    );
+    const aiMove = this.smartAI.chooseMove(board, this.smartAI.getLevel());
 
     const success = this.chessEngine.makeMove(aiMove);
 

@@ -7,48 +7,56 @@ Chess MCP is a Model Context Protocol (MCP) server that provides chess functiona
 ## Documentation Structure
 
 ### 📚 [Architecture & Design Decisions](./architecture.md)
+
 - Project structure and modular design
 - Technology choices and rationale
 - Design patterns used
 - Alternative approaches considered
 
 ### 🚀 [Quick Start Guide](./quick-start.md)
+
 - Installation and setup
 - Basic usage examples
 - MCP client configuration
 - Common troubleshooting
 
 ### 🎮 [User Guide](./user-guide.md)
+
 - Interactive CLI usage
 - MCP server capabilities
 - Available commands and features
 - Game modes and AI levels
 
 ### 🔧 [Developer Guide](./developer-guide.md)
+
 - Development setup
 - Code organization
 - Testing strategies
 - Contributing guidelines
 
 ### 🤖 [AI Implementation](./ai-implementation.md)
+
 - Chess AI algorithms
 - Evaluation functions
 - Performance optimization
 - Alternative AI approaches
 
 ### 📊 [Performance & Benchmarks](./performance.md)
+
 - Performance metrics
 - Optimization strategies
 - Memory usage analysis
 - Scalability considerations
 
 ### 🔍 [API Reference](./api-reference.md)
+
 - MCP server API
 - Chess engine methods
 - Type definitions
 - Error handling
 
 ### 🧪 [Testing Strategy](./testing.md)
+
 - Test coverage
 - Testing methodologies
 - Automated testing
@@ -75,4 +83,4 @@ See [Developer Guide](./developer-guide.md) for contribution guidelines and deve
 
 ## License
 
-MIT License - see [LICENSE](../LICENSE) file for details. 
+MIT License - see [LICENSE](../LICENSE) file for details.
