@@ -98,6 +98,46 @@ describe("ChessEngine", () => {
 });
 ```
 
+#### 2. AI Reliability Tests
+
+```typescript
+describe("AI Reliability", () => {
+  test("AI move validation", () => {
+    // Test that AI moves are always valid
+    const chess = new ChessEngine();
+    const ai = new ChessAI(3);
+
+    chess.makeMove("b1a3"); // Set up position
+    const legalMoves = chess.getAllLegalMoves();
+    const aiMove = ai.chooseMove(
+      legalMoves,
+      chess.getBoard().squares,
+      chess.getGameState().turn,
+    );
+
+    expect(chess.makeMove(aiMove)).toBe(true);
+  });
+
+  test("AI level consistency", () => {
+    // Test that all AI levels work correctly
+    for (let level = 1; level <= 5; level++) {
+      const chess = new ChessEngine();
+      const ai = new ChessAI(level);
+
+      chess.makeMove("e2e4");
+      const legalMoves = chess.getAllLegalMoves();
+      const aiMove = ai.chooseMove(
+        legalMoves,
+        chess.getBoard().squares,
+        chess.getGameState().turn,
+      );
+
+      expect(chess.makeMove(aiMove)).toBe(true);
+    }
+  });
+});
+```
+
 #### 2. AI Tests
 
 ```typescript

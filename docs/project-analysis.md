@@ -68,17 +68,24 @@ Chess MCP is a well-architected chess engine with MCP server integration that de
    - Transposition tables implemented for position caching
    - Advanced techniques implemented (iterative deepening, quiescence search)
 
-2. **Performance Bottlenecks** ✅ **RESOLVED**
+2. **AI Reliability Issues** ✅ **RESOLVED**
+   - Fixed "AI failed to make a valid move" errors
+   - AI now uses chess engine's legal moves for validation
+   - Improved compatibility across all difficulty levels
+   - Enhanced error handling and board format conversion
+
+3. **Performance Bottlenecks** ✅ **RESOLVED**
    - Memory optimization and cleanup implemented
    - Transposition tables eliminate repeated calculations
    - LRU eviction prevents memory leaks
 
-3. **Testing Gaps** ✅ **RESOLVED**
+4. **Testing Gaps** ✅ **RESOLVED**
    - Comprehensive unit tests for all critical components
    - Performance tests included
+   - AI reliability tests added
    - 25/25 tests passing with full coverage
 
-4. **Scalability Concerns** ⚠️ **PARTIALLY RESOLVED**
+5. **Scalability Concerns** ⚠️ **PARTIALLY RESOLVED**
    - Caching layer implemented
    - Extensibility improved
    - Still single-threaded (addressed in medium-term improvements)

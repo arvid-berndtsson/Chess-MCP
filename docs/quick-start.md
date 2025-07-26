@@ -80,6 +80,8 @@ chess> mode human-vs-ai 3
 chess> move e2e4
 ```
 
+**Note**: The AI has been improved for better reliability. All AI levels now work consistently without move validation errors.
+
 ### MCP Mode
 
 Once configured, you can use chess commands in your AI assistant:

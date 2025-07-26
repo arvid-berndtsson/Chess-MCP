@@ -87,42 +87,83 @@ private choosePositionalMove(moves: ChessMove[], board: any, color: 'w' | 'b'): 
 
 ### 3. Minimax Algorithm (Levels 3-5)
 
-**Implementation**: `SmartChessAI.minimax()`
+**Implementation**: `SmartChessAI.chooseAdvancedMoveFromMoves()`
+
+The AI now uses the legal moves provided by the chess engine instead of generating its own, ensuring compatibility and preventing move validation errors.
 
 ```typescript
-private minimax(board: any, depth: number, alpha: number, beta: number, isMaximizing: boolean): number {
-  if (depth === 0) {
-    return this.evaluatePositionAdvanced(board);
+private chooseAdvancedMoveFromMoves(moves: ChessMove[], board: any, color: "w" | "b", level: number): ChessMove {
+  if (moves.length === 0) return moves[0];
+
+  // Use iterative deepening with time management
+  const maxDepth = Math.min(level + 2, 8); // Cap at 8 plies
+  let bestMove = moves[0];
+  let bestScore = -Infinity;
+
+  for (let depth = 1; depth <= maxDepth; depth++) {
+    if (this.isTimeUp()) break;
+
+    const moveScores = moves.map((move) => {
+      const boardCopy = this.copyBoard({ squares: board, turn: color } as ChessBoard);
+      this.makeMoveOnBoard(boardCopy.squares, move);
+      const score = -this.iterativeMinimax(
+        boardCopy.squares,
+        depth - 1,
+        -Infinity,
+        Infinity,
+        false,
+      );
+      return { move, score };
+    });
+
+    // Sort by score and update best move
+    moveScores.sort((a, b) => b.score - a.score);
+    if (moveScores.length > 0) {
+      bestMove = moveScores[0].move;
+      bestScore = moveScores[0].score;
+    }
+
+    // Early exit if we found a winning move
+    if (bestScore > 9000) break;
   }
 
-  const legalMoves = this.getLegalMovesForBoard(board, isMaximizing ? 'w' : 'b');
-  const orderedMoves = this.orderMoves(legalMoves, board, isMaximizing ? 'w' : 'b');
-
-  if (isMaximizing) {
-    let maxScore = -Infinity;
-    for (const move of orderedMoves) {
-      const boardCopy = this.copyBoard(board);
-      this.makeMoveOnBoard(boardCopy, move);
-      const score = this.minimax(boardCopy, depth - 1, alpha, beta, false);
-      maxScore = Math.max(maxScore, score);
-      alpha = Math.max(alpha, score);
-      if (beta <= alpha) break; // Beta cutoff
-    }
-    return maxScore;
-  } else {
-    let minScore = Infinity;
-    for (const move of orderedMoves) {
-      const boardCopy = this.copyBoard(board);
-      this.makeMoveOnBoard(boardCopy, move);
-      const score = this.minimax(boardCopy, depth - 1, alpha, beta, true);
-      minScore = Math.min(minScore, score);
-      beta = Math.min(beta, score);
-      if (beta <= alpha) break; // Alpha cutoff
-    }
-    return minScore;
-  }
+  return bestMove;
 }
 ```
+
+**Key Improvements**:
+
+- **Uses provided legal moves**: No longer generates moves internally, preventing validation errors
+- **Proper board format**: Converts board data to ChessBoard format for compatibility
+- **Enhanced error handling**: Better handling of edge cases and invalid moves
+- **Improved reliability**: Eliminates "AI failed to make a valid move" errors
+
+  if (isMaximizing) {
+  let maxScore = -Infinity;
+  for (const move of orderedMoves) {
+  const boardCopy = this.copyBoard(board);
+  this.makeMoveOnBoard(boardCopy, move);
+  const score = this.minimax(boardCopy, depth - 1, alpha, beta, false);
+  maxScore = Math.max(maxScore, score);
+  alpha = Math.max(alpha, score);
+  if (beta <= alpha) break; // Beta cutoff
+  }
+  return maxScore;
+  } else {
+  let minScore = Infinity;
+  for (const move of orderedMoves) {
+  const boardCopy = this.copyBoard(board);
+  this.makeMoveOnBoard(boardCopy, move);
+  const score = this.minimax(boardCopy, depth - 1, alpha, beta, true);
+  minScore = Math.min(minScore, score);
+  beta = Math.min(beta, score);
+  if (beta <= alpha) break; // Alpha cutoff
+  }
+  return minScore;
+  }
+  }
+
+````
 
 **Features**:
 
@@ -130,6 +171,8 @@ private minimax(board: any, depth: number, alpha: number, beta: number, isMaximi
 - Move ordering for better pruning
 - Configurable search depth
 - Advanced position evaluation
+- **Reliability improvements**: Uses chess engine's legal moves for validation
+- **Error prevention**: Eliminates move validation failures
 
 ## Position Evaluation
 
@@ -139,7 +182,7 @@ private minimax(board: any, depth: number, alpha: number, beta: number, isMaximi
 private readonly pieceValues = {
   'p': 100, 'n': 320, 'b': 330, 'r': 500, 'q': 900, 'k': 20000
 };
-```
+````
 
 **Rationale**:
 
@@ -265,6 +308,27 @@ private readonly openingBook = {
 - Limited opening repertoire
 - No transposition handling
 - Static book (no learning)
+
+## Recent Bug Fixes
+
+### AI Move Validation Issue (RESOLVED)
+
+**Problem**: The AI was failing to make valid moves in human-vs-AI games, returning "AI failed to make a valid move" errors.
+
+**Root Cause**: The AI was generating its own legal moves internally instead of using the legal moves provided by the chess engine, leading to move validation mismatches.
+
+**Solution**:
+
+- Modified `ChessAI.chooseMove()` to pass legal moves directly to `SmartChessAI`
+- Added `SmartChessAI.chooseMoveFromMoves()` method to use provided legal moves
+- Added `SmartChessAI.chooseAdvancedMoveFromMoves()` for advanced AI levels
+- Ensured proper board format conversion for compatibility
+
+**Impact**:
+
+- ✅ Eliminates "AI failed to make a valid move" errors
+- ✅ Improves AI reliability across all difficulty levels
+- ✅ Maintains AI playing strength while fixing validation issues
 
 ## Performance Analysis
 

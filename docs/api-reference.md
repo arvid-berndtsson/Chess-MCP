@@ -322,12 +322,14 @@ Resets the game.
 #### Constructor
 
 ```typescript
-constructor();
+constructor(level?: number);
 ```
 
 #### Methods
 
 ##### `chooseMove(board: ChessBoard, level: number): ChessMove`
+
+**DEPRECATED**: Use `chooseMoveFromMoves()` instead for better reliability.
 
 Chooses the best move for the given position.
 
@@ -337,6 +339,25 @@ Chooses the best move for the given position.
 - `level`: AI difficulty (1-5)
 
 **Returns**: `ChessMove` - Best move
+
+##### `chooseMoveFromMoves(moves: ChessMove[], board: any, color: "w" | "b", level: number): ChessMove`
+
+**RECOMMENDED**: Chooses the best move from provided legal moves.
+
+**Parameters**:
+
+- `moves`: Array of legal moves from chess engine
+- `board`: Board squares array
+- `color`: Current player color ("w" or "b")
+- `level`: AI difficulty (1-5)
+
+**Returns**: `ChessMove` - Best move
+
+**Benefits**:
+
+- Uses chess engine's legal moves for validation
+- Prevents "AI failed to make a valid move" errors
+- More reliable than internal move generation
 
 ##### `evaluatePosition(board: ChessBoard): number`
 

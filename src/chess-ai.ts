@@ -11,7 +11,12 @@ export class ChessAI {
 
   chooseMove(moves: ChessMove[], board: any, color: "w" | "b"): ChessMove {
     // Use the provided legal moves instead of generating our own
-    return this.smartAI.chooseMoveFromMoves(moves, board, color, this.smartAI.getLevel());
+    return this.smartAI.chooseMoveFromMoves(
+      moves,
+      board,
+      color,
+      this.smartAI.getLevel(),
+    );
   }
 
   setLevel(level: number): void {
@@ -177,7 +182,12 @@ export class SmartChessAI {
     }
   }
 
-  public chooseMoveFromMoves(moves: ChessMove[], board: any, color: "w" | "b", level: number): ChessMove {
+  public chooseMoveFromMoves(
+    moves: ChessMove[],
+    board: any,
+    color: "w" | "b",
+    level: number,
+  ): ChessMove {
     this.resetSearchStats();
 
     // Convert board to ChessBoard format
@@ -284,7 +294,12 @@ export class SmartChessAI {
     return bestMove;
   }
 
-  private chooseAdvancedMoveFromMoves(moves: ChessMove[], board: any, color: "w" | "b", level: number): ChessMove {
+  private chooseAdvancedMoveFromMoves(
+    moves: ChessMove[],
+    board: any,
+    color: "w" | "b",
+    level: number,
+  ): ChessMove {
     if (moves.length === 0) return moves[0];
 
     // Use iterative deepening with time management
@@ -296,7 +311,10 @@ export class SmartChessAI {
       if (this.isTimeUp()) break;
 
       const moveScores = moves.map((move) => {
-        const boardCopy = this.copyBoard({ squares: board, turn: color } as ChessBoard);
+        const boardCopy = this.copyBoard({
+          squares: board,
+          turn: color,
+        } as ChessBoard);
         this.makeMoveOnBoard(boardCopy.squares, move);
         const score = -this.iterativeMinimax(
           boardCopy.squares,
@@ -345,7 +363,13 @@ export class SmartChessAI {
     }
 
     if (depth === 0) {
-      return this.quiescenceSearch(board, alpha, beta, 0, isMaximizing ? "w" : "b");
+      return this.quiescenceSearch(
+        board,
+        alpha,
+        beta,
+        0,
+        isMaximizing ? "w" : "b",
+      );
     }
 
     const legalMoves = this.getLegalMovesForBoard(
@@ -431,7 +455,13 @@ export class SmartChessAI {
     for (const capture of captures) {
       const boardCopy = this.copyBoard(board);
       this.makeMoveOnBoard(boardCopy, capture);
-      const score = -this.quiescenceSearch(boardCopy, -beta, -alpha, depth + 1, color === "w" ? "b" : "w");
+      const score = -this.quiescenceSearch(
+        boardCopy,
+        -beta,
+        -alpha,
+        depth + 1,
+        color === "w" ? "b" : "w",
+      );
 
       if (score >= beta) {
         return beta;

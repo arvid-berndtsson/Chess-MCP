@@ -94,6 +94,8 @@ Examples:
 
 ## AI Difficulty Levels
 
+The AI has been improved for better reliability and consistency across all difficulty levels. All AI levels now use the chess engine's legal moves for validation, preventing move errors.
+
 ### Level 1: Beginner
 
 - **Algorithm**: Smart Random
@@ -313,6 +315,23 @@ The AI evaluates positions using multiple factors:
 - Study opening theory
 - Practice tactical positions
 - Use analysis to learn from mistakes
+
+## Troubleshooting
+
+### AI Move Issues
+
+**Problem**: "AI failed to make a valid move" error
+
+**Status**: ✅ **RESOLVED** - This issue has been fixed in the latest version.
+
+**Solution**: The AI now uses the chess engine's legal moves for validation, preventing this error from occurring.
+
+**If you still encounter issues**:
+
+1. Restart the MCP server
+2. Check that you're using the latest version
+3. Try a different AI level
+4. Report the issue with debug information
 
 ## Keyboard Shortcuts
 
