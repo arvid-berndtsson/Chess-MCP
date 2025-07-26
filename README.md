@@ -89,22 +89,6 @@ npx tsx src/index.ts
 npm start
 ```
 
-## 🚀 Recent Improvements
-
-### ✅ All Immediate Improvements Implemented
-
-The project has been significantly enhanced with all recommended immediate improvements:
-
-- **🔄 Transposition Tables**: 2-5x performance improvement through intelligent position caching
-- **⚡ Iterative Deepening**: Progressive depth search with optimal time management (5-second limit)
-- **💾 Memory Optimization**: LRU eviction strategy prevents memory leaks
-- **🧪 Comprehensive Testing**: 25/25 tests passing with full coverage
-
-### Performance Benchmarks
-- **Search Speed**: 2-5x faster AI calculations
-- **Memory Usage**: Controlled and optimized
-- **Move Quality**: Better through iterative deepening
-- **Stability**: No crashes or infinite loops
 
 ## 📚 Documentation
 
