@@ -89,7 +89,6 @@ npx tsx src/index.ts
 npm start
 ```
 
-
 ## 📚 Documentation
 
 For detailed documentation, see the [docs](./docs/) folder:

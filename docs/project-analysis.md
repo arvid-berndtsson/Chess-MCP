@@ -8,14 +8,14 @@ Chess MCP is a well-architected chess engine with MCP server integration that de
 
 ### Overall Score: 8.5/10 ⬆️
 
-| Category              | Score | Strengths                                         | Weaknesses                                         |
-| --------------------- | ----- | ------------------------------------------------- | -------------------------------------------------- |
-| **Architecture**      | 9/10  | Clean modular design, TypeScript, modern patterns | Missing abstraction layers                         |
-| **AI Implementation** | 8/10  | Advanced algorithms, transposition tables, iterative deepening | Could benefit from neural networks                 |
-| **Performance**       | 8/10  | 2-5x improvement, memory optimization, caching    | Still single-threaded                              |
-| **Testing**           | 8/10  | Comprehensive test suite, 25/25 passing           | Could add more performance benchmarks              |
-| **Documentation**     | 9/10  | Comprehensive, well-structured, clear examples    | Could include more code examples                   |
-| **User Experience**   | 7/10  | Multiple interfaces, good CLI                     | Terminal-only, limited visual feedback             |
+| Category              | Score | Strengths                                                      | Weaknesses                             |
+| --------------------- | ----- | -------------------------------------------------------------- | -------------------------------------- |
+| **Architecture**      | 9/10  | Clean modular design, TypeScript, modern patterns              | Missing abstraction layers             |
+| **AI Implementation** | 8/10  | Advanced algorithms, transposition tables, iterative deepening | Could benefit from neural networks     |
+| **Performance**       | 8/10  | 2-5x improvement, memory optimization, caching                 | Still single-threaded                  |
+| **Testing**           | 8/10  | Comprehensive test suite, 25/25 passing                        | Could add more performance benchmarks  |
+| **Documentation**     | 9/10  | Comprehensive, well-structured, clear examples                 | Could include more code examples       |
+| **User Experience**   | 7/10  | Multiple interfaces, good CLI                                  | Terminal-only, limited visual feedback |
 
 ## Documentation Structure
 
@@ -143,7 +143,8 @@ private evaluatePosition(board: any): number {
 const move = ai.chooseMove(board, 5); // Optimized to 200-300ms
 ```
 
-**Impact**: 
+**Impact**:
+
 - Good performance for current use case
 - Could benefit from parallel processing for complex positions
 
@@ -172,7 +173,7 @@ describe("ChessEngine", () => {
     const result = engine.makeMove("e2e4");
     expect(result).toBe(true);
   });
-  
+
   test("should handle AI moves", () => {
     const move = ai.chooseMove(board, 3);
     expect(move).toBeDefined();
