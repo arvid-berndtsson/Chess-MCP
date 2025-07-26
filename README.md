@@ -5,17 +5,20 @@ A powerful chess engine and game server built with the Model Context Protocol (M
 ## 🎯 Features
 
 ### Core Chess Engine
+
 - **Full Chess Rules**: Complete implementation of all chess rules including castling, en passant, and pawn promotion
 - **Move Validation**: Automatic validation of all chess moves
 - **Game State Tracking**: Track check, checkmate, stalemate, and draw conditions
 - **Move History**: Complete move history with algebraic notation
 
 ### Multiple Game Modes
+
 - **Human vs Human**: Classic two-player chess
 - **Human vs AI**: Play against computer with adjustable difficulty (1-5 levels)
 - **AI vs AI**: Watch AI play against itself
 
 ### AI Features
+
 - **Smart AI Engine**: Minimax algorithm with alpha-beta pruning
 - **5 Difficulty Levels**: From beginner (random) to expert (depth 5)
 - **Automatic Play**: AI responds automatically in human-vs-ai mode
@@ -23,6 +26,7 @@ A powerful chess engine and game server built with the Model Context Protocol (M
 - **Position Analysis**: AI can analyze positions and suggest best moves
 
 ### Advanced Features
+
 - **Position Analysis**: Analyze positions and get best move suggestions
 - **FEN Support**: Load and save positions using FEN notation
 - **PGN Support**: Import and export games in PGN format
@@ -30,6 +34,7 @@ A powerful chess engine and game server built with the Model Context Protocol (M
 - **Legal Move Display**: Show all legal moves for any position
 
 ### Beautiful UI
+
 - **ASCII Chess Board**: Clean, readable board representation with Unicode chess pieces
 - **Color-coded Output**: Different colors for different types of information
 - **Interactive Commands**: Easy-to-use command system
@@ -38,10 +43,12 @@ A powerful chess engine and game server built with the Model Context Protocol (M
 ## 🚀 Installation
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 
 ### Setup
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -80,6 +87,7 @@ npm start
 ## 🎮 Available Commands
 
 ### Basic Game Commands
+
 - `move <move>` - Make a move (e.g., `move e2e4`, `move Nf3`)
 - `board` - Display the current board
 - `status` - Show game status
@@ -88,11 +96,13 @@ npm start
 - `reset` - Reset to starting position
 
 ### Analysis Commands
+
 - `moves <square>` - Show legal moves for a square (e.g., `moves e2`)
 - `all-moves` - Show all legal moves
 - `analyze [depth]` - Analyze position (default depth: 3)
 
 ### Game Mode Commands
+
 - `mode <type> [ai-level]` - Set game mode:
   - `mode human-vs-human` - Two human players
   - `mode human-vs-ai 3` - Play against AI (level 1-5)
@@ -100,6 +110,7 @@ npm start
 - `ai` - Make AI play a move (for manual control)
 
 ### Import/Export Commands
+
 - `fen <position>` - Load position from FEN
 - `pgn <game>` - Load game from PGN
 - `save` - Save current game to PGN
@@ -109,21 +120,25 @@ npm start
 The chess MCP provides the following tools for AI integration:
 
 ### Game Management
+
 - `start_new_game` - Start a new game with specified mode
 - `reset_game` - Reset to starting position
 - `get_game_status` - Get current game status
 
 ### Move Operations
+
 - `make_move` - Make a chess move
 - `get_legal_moves` - Get legal moves for a square or all pieces
 - `undo_move` - Undo the last move
 
 ### Board and Analysis
+
 - `get_board_state` - Get current board state
 - `analyze_position` - Analyze position and suggest moves
 - `get_move_history` - Get complete move history
 
 ### AI Features
+
 - `ai_move` - Make AI play a move
 - `load_position` - Load position from FEN
 - `save_game` - Save game to PGN
@@ -134,6 +149,7 @@ The chess MCP provides the following tools for AI integration:
 ### Playing Against AI
 
 **Quick Start:**
+
 ```bash
 # Start the interactive CLI
 npm run cli
@@ -157,6 +173,7 @@ chess> status
 ```
 
 **AI Difficulty Levels:**
+
 - **Level 1**: Random moves (perfect for beginners)
 - **Level 2**: Basic strategy (good for casual play)
 - **Level 3**: Moderate difficulty (challenging)
@@ -164,6 +181,7 @@ chess> status
 - **Level 5**: Expert level (extremely challenging)
 
 **Manual AI Control:**
+
 ```bash
 # Set mode but control when AI plays
 chess> mode human-vs-ai 3
@@ -174,6 +192,7 @@ chess> ai  # Tell AI to play again
 ```
 
 **Watch AI vs AI:**
+
 ```bash
 chess> mode ai-vs-ai 3
 chess> ai  # First AI move
@@ -182,6 +201,7 @@ chess> ai  # Continue watching...
 ```
 
 ### Starting a Game
+
 ```bash
 chess> mode human-vs-ai 3
 Game mode set to: human-vs-ai (AI level: 3)
@@ -209,6 +229,7 @@ AI played: e7e5
 ```
 
 ### Analyzing a Position
+
 ```bash
 chess> analyze 4
 Position Analysis (Depth: 4):
@@ -221,6 +242,7 @@ Best moves:
 ```
 
 ### Getting Legal Moves
+
 ```bash
 chess> moves e2
 Legal moves for e2:
@@ -297,23 +319,28 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ### Common Issues
 
 **"Command not found: npm"**
+
 - Make sure Node.js is installed: `node --version`
 - Install Node.js from [nodejs.org](https://nodejs.org/)
 
 **"Cannot find module" errors**
+
 - Run `npm install` to install dependencies
 - Run `npm run build` to compile TypeScript
 
 **Interactive CLI not starting**
+
 - Use `npm run cli` (not `npm run dev`)
 - Make sure you're in the Chess-MCP directory
 
 **AI not responding**
+
 - Check game mode: `mode human-vs-ai 2`
 - In human-vs-ai mode, AI responds automatically
 - Use `ai` command for manual AI moves
 
 **Move not working**
+
 - Check legal moves: `moves <square>`
 - Use correct format: `move e2e4` or `move Nf3`
 - Check game status: `status`
@@ -327,4 +354,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Happy Chess Playing! ♔♕♖♗♘♙** 
+**Happy Chess Playing! ♔♕♖♗♘♙**

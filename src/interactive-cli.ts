@@ -1,16 +1,16 @@
-import readline from 'readline';
-import { ChessEngine } from './chess-engine.js';
-import { ChessUI } from './chess-ui.js';
-import { ChessAI } from './chess-ai.js';
-import { SmartChessAI } from './smart-chess-ai.js';
-import type { GameMode } from './types.js';
+import readline from "readline";
+import { ChessEngine } from "./chess-engine.js";
+import { ChessUI } from "./chess-ui.js";
+import { ChessAI } from "./chess-ai.js";
+import { SmartChessAI } from "./smart-chess-ai.js";
+import type { GameMode } from "./types.js";
 
 export class InteractiveCLI {
   private chessEngine: ChessEngine;
   private chessUI: ChessUI;
   private chessAI: ChessAI;
   private smartAI: SmartChessAI;
-  private gameMode: GameMode = { type: 'human-vs-human' };
+  private gameMode: GameMode = { type: "human-vs-human" };
   private rl: readline.Interface;
 
   constructor() {
@@ -20,101 +20,105 @@ export class InteractiveCLI {
     this.smartAI = new SmartChessAI(1);
     this.rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
   }
 
   async start(): Promise<void> {
     this.chessUI.displayWelcome();
     this.chessUI.displayMenu();
-    
+
     await this.gameLoop();
   }
 
   private async gameLoop(): Promise<void> {
     while (true) {
       try {
-        const input = await this.prompt('chess> ');
+        const input = await this.prompt("chess> ");
         const command = input.trim().toLowerCase();
-        
-        if (command === 'quit' || command === 'exit') {
-          this.chessUI.displayInfo('Thanks for playing!');
+
+        if (command === "quit" || command === "exit") {
+          this.chessUI.displayInfo("Thanks for playing!");
           break;
         }
-        
+
         await this.processCommand(command);
       } catch (error) {
-        this.chessUI.displayError(error instanceof Error ? error.message : 'Unknown error');
+        this.chessUI.displayError(
+          error instanceof Error ? error.message : "Unknown error",
+        );
       }
     }
-    
+
     this.rl.close();
   }
 
   private async processCommand(command: string): Promise<void> {
-    const parts = command.split(' ');
+    const parts = command.split(" ");
     const cmd = parts[0];
     const args = parts.slice(1);
 
     switch (cmd) {
-      case 'move':
+      case "move":
         await this.handleMove(args);
         break;
-      
-      case 'moves':
+
+      case "moves":
         await this.handleMoves(args);
         break;
-      
-      case 'all-moves':
+
+      case "all-moves":
         await this.handleAllMoves();
         break;
-      
-      case 'history':
+
+      case "history":
         await this.handleHistory();
         break;
-      
-      case 'status':
+
+      case "status":
         await this.handleStatus();
         break;
-      
-      case 'board':
+
+      case "board":
         await this.handleBoard();
         break;
-      
-      case 'undo':
+
+      case "undo":
         await this.handleUndo();
         break;
-      
-      case 'reset':
+
+      case "reset":
         await this.handleReset();
         break;
-      
-      case 'fen':
+
+      case "fen":
         await this.handleFen(args);
         break;
-      
-      case 'pgn':
+
+      case "pgn":
         await this.handlePgn(args);
         break;
-      
-      case 'analyze':
+
+      case "analyze":
         await this.handleAnalyze(args);
         break;
-      
-      case 'ai':
+
+      case "ai":
         await this.handleAI();
         break;
-      
-      case 'mode':
+
+      case "mode":
         await this.handleMode(args);
         break;
-      
-      case 'help':
+
+      case "help":
         this.chessUI.displayMenu();
         break;
-      
+
       default:
-        this.chessUI.displayError(`Unknown command: ${cmd}. Type 'help' for available commands.`);
+        this.chessUI.displayError(
+          `Unknown command: ${cmd}. Type 'help' for available commands.`,
+        );
     }
   }
 
@@ -124,9 +128,9 @@ export class InteractiveCLI {
       return;
     }
 
-    const move = args.join(' ');
+    const move = args.join(" ");
     const success = this.chessEngine.makeMove(move);
-    
+
     if (!success) {
       this.chessUI.displayError(`Invalid move: ${move}`);
       return;
@@ -138,16 +142,16 @@ export class InteractiveCLI {
     // Check if game is over
     const gameState = this.chessEngine.getGameState();
     if (gameState.isCheckmate) {
-      const winner = gameState.turn === 'w' ? 'Black' : 'White';
+      const winner = gameState.turn === "w" ? "Black" : "White";
       this.chessUI.displaySuccess(`🎯 CHECKMATE! ${winner} wins!`);
     } else if (gameState.isCheck) {
-      this.chessUI.displayInfo('⚡ CHECK!');
+      this.chessUI.displayInfo("⚡ CHECK!");
     } else if (gameState.isDraw) {
-      this.chessUI.displayInfo('🤝 DRAW');
+      this.chessUI.displayInfo("🤝 DRAW");
     }
 
     // If AI vs Human and it's AI's turn
-    if (this.gameMode.type === 'human-vs-ai' && gameState.turn === 'b') {
+    if (this.gameMode.type === "human-vs-ai" && gameState.turn === "b") {
       await this.makeAIMove();
     }
   }
@@ -185,55 +189,55 @@ export class InteractiveCLI {
 
   private async handleUndo(): Promise<void> {
     const success = this.chessEngine.undoMove();
-    
+
     if (!success) {
-      this.chessUI.displayError('No moves to undo');
+      this.chessUI.displayError("No moves to undo");
       return;
     }
 
-    this.chessUI.displaySuccess('Move undone!');
+    this.chessUI.displaySuccess("Move undone!");
     this.displayCurrentState();
   }
 
   private async handleReset(): Promise<void> {
     this.chessEngine.reset();
-    this.chessUI.displaySuccess('Game reset to starting position!');
+    this.chessUI.displaySuccess("Game reset to starting position!");
     this.displayCurrentState();
   }
 
   private async handleFen(args: string[]): Promise<void> {
     if (args.length === 0) {
-      this.chessUI.displayError('Please provide a FEN position');
+      this.chessUI.displayError("Please provide a FEN position");
       return;
     }
 
-    const fen = args.join(' ');
+    const fen = args.join(" ");
     const success = this.chessEngine.loadFen(fen);
-    
+
     if (!success) {
-      this.chessUI.displayError('Invalid FEN position');
+      this.chessUI.displayError("Invalid FEN position");
       return;
     }
 
-    this.chessUI.displaySuccess('Position loaded from FEN!');
+    this.chessUI.displaySuccess("Position loaded from FEN!");
     this.displayCurrentState();
   }
 
   private async handlePgn(args: string[]): Promise<void> {
     if (args.length === 0) {
-      this.chessUI.displayError('Please provide a PGN game');
+      this.chessUI.displayError("Please provide a PGN game");
       return;
     }
 
-    const pgn = args.join(' ');
+    const pgn = args.join(" ");
     const success = this.chessEngine.loadPgn(pgn);
-    
+
     if (!success) {
-      this.chessUI.displayError('Invalid PGN format');
+      this.chessUI.displayError("Invalid PGN format");
       return;
     }
 
-    this.chessUI.displaySuccess('Game loaded from PGN!');
+    this.chessUI.displaySuccess("Game loaded from PGN!");
     this.displayCurrentState();
   }
 
@@ -253,37 +257,45 @@ export class InteractiveCLI {
       return;
     }
 
-    const mode = args[0] as GameMode['type'];
+    const mode = args[0] as GameMode["type"];
     const aiLevel = parseInt(args[1]) || 1;
 
-    if (!['human-vs-human', 'human-vs-ai', 'ai-vs-ai'].includes(mode)) {
-      this.chessUI.displayError('Invalid mode. Use: human-vs-human, human-vs-ai, or ai-vs-ai');
+    if (!["human-vs-human", "human-vs-ai", "ai-vs-ai"].includes(mode)) {
+      this.chessUI.displayError(
+        "Invalid mode. Use: human-vs-human, human-vs-ai, or ai-vs-ai",
+      );
       return;
     }
 
     this.gameMode = { type: mode, aiLevel };
     this.chessAI.setLevel(aiLevel);
     this.smartAI.setLevel(aiLevel);
-    this.chessUI.displaySuccess(`Game mode set to: ${mode} (AI level: ${aiLevel})`);
+    this.chessUI.displaySuccess(
+      `Game mode set to: ${mode} (AI level: ${aiLevel})`,
+    );
   }
 
   private async makeAIMove(): Promise<void> {
     const legalMoves = this.chessEngine.getAllLegalMoves();
-    
+
     if (legalMoves.length === 0) {
-      this.chessUI.displayError('No legal moves available for AI');
+      this.chessUI.displayError("No legal moves available for AI");
       return;
     }
 
     const board = this.chessEngine.getBoard();
     const gameState = this.chessEngine.getGameState();
     // Use smart AI for better moves
-    const aiMove = this.smartAI.chooseMove(legalMoves, board.squares, gameState.turn);
+    const aiMove = this.smartAI.chooseMove(
+      legalMoves,
+      board.squares,
+      gameState.turn,
+    );
 
     const success = this.chessEngine.makeMove(aiMove);
-    
+
     if (!success) {
-      this.chessUI.displayError('AI failed to make a valid move');
+      this.chessUI.displayError("AI failed to make a valid move");
       return;
     }
 
@@ -294,10 +306,10 @@ export class InteractiveCLI {
     // Check if game is over after AI move
     const newGameState = this.chessEngine.getGameState();
     if (newGameState.isCheckmate) {
-      const winner = newGameState.turn === 'w' ? 'Black' : 'White';
+      const winner = newGameState.turn === "w" ? "Black" : "White";
       this.chessUI.displaySuccess(`🎯 CHECKMATE! ${winner} wins!`);
     } else if (newGameState.isCheck) {
-      this.chessUI.displayInfo('⚡ CHECK!');
+      this.chessUI.displayInfo("⚡ CHECK!");
     }
   }
 
@@ -317,4 +329,4 @@ export class InteractiveCLI {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const cli = new InteractiveCLI();
   cli.start().catch(console.error);
-} 
+}

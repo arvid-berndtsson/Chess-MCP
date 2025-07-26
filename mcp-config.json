@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "chess": {
+      "name": "Chess MCP",
+      "type": "stdio",
+      "command": "npx",
+      "args": ["tsx", "PATH-TO-PROJECT/src/index.ts"]
+    }
+  }
+}

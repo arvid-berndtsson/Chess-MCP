@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import { ChessEngine } from "./dist/chess-engine.js";
-import { ChessUI } from "./dist/chess-ui.js";
-import { ChessAI } from "./dist/chess-ai.js";
+import { ChessEngine } from "./src/chess-engine.js";
+import { ChessUI } from "./src/chess-ui.js";
+import { ChessAI } from "./src/chess-ai.js";
 
-async function testChess() {
+async function testChess(): Promise<void> {
   console.log("♔♕♖♗♘♙ Testing Chess MCP! ♟♞♝♜♛♚\n");
 
   const chess = new ChessEngine();

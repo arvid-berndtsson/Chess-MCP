@@ -1,5 +1,11 @@
-import { Chess } from 'chess.js';
-import type { ChessMove, ChessGame, ChessBoard, ChessAnalysis, ChessPiece } from './types.js';
+import { Chess } from "chess.js";
+import type {
+  ChessMove,
+  ChessGame,
+  ChessBoard,
+  ChessAnalysis,
+  ChessPiece,
+} from "./types.js";
 
 export class ChessEngine {
   private chess: Chess;
@@ -20,7 +26,7 @@ export class ChessEngine {
       isDraw: this.chess.isDraw(),
       isStalemate: this.chess.isStalemate(),
       turn: this.chess.turn(),
-      moveNumber: Math.ceil(this.chess.moveNumber() / 2)
+      moveNumber: Math.ceil(this.chess.moveNumber() / 2),
     };
   }
 
@@ -31,25 +37,37 @@ export class ChessEngine {
       squares: board,
       turn: this.chess.turn(),
       castling: {
-        w: { k: this.chess.moves({ square: 'e1' }).some(m => m.includes('O-O')), q: this.chess.moves({ square: 'e1' }).some(m => m.includes('O-O-O')) },
-        b: { k: this.chess.moves({ square: 'e8' }).some(m => m.includes('O-O')), q: this.chess.moves({ square: 'e8' }).some(m => m.includes('O-O-O')) }
+        w: {
+          k: this.chess.moves({ square: "e1" }).some((m) => m.includes("O-O")),
+          q: this.chess
+            .moves({ square: "e1" })
+            .some((m) => m.includes("O-O-O")),
+        },
+        b: {
+          k: this.chess.moves({ square: "e8" }).some((m) => m.includes("O-O")),
+          q: this.chess
+            .moves({ square: "e8" })
+            .some((m) => m.includes("O-O-O")),
+        },
       },
-      enPassant: this.chess.moves({ verbose: true }).find(m => m.flags.includes('e'))?.to || null,
+      enPassant:
+        this.chess.moves({ verbose: true }).find((m) => m.flags.includes("e"))
+          ?.to || null,
       halfMoveClock: this.chess.moves().length,
-      fullMoveNumber: this.chess.moveNumber()
+      fullMoveNumber: this.chess.moveNumber(),
     };
   }
 
   // Make a move
   makeMove(move: string | ChessMove): boolean {
     try {
-      if (typeof move === 'string') {
+      if (typeof move === "string") {
         this.chess.move(move);
       } else {
         this.chess.move({
           from: move.from,
           to: move.to,
-          promotion: move.promotion as any
+          promotion: move.promotion as any,
         });
       }
       return true;
@@ -61,12 +79,12 @@ export class ChessEngine {
   // Get all legal moves for a square
   getLegalMoves(square?: string): ChessMove[] {
     const moves = this.chess.moves({ square: square as any, verbose: true });
-    return moves.map(move => ({
+    return moves.map((move) => ({
       from: move.from,
       to: move.to,
       promotion: move.promotion,
       san: move.san,
-      lan: move.lan
+      lan: move.lan,
     }));
   }
 
@@ -78,8 +96,9 @@ export class ChessEngine {
   // Check if a move is legal
   isLegalMove(move: ChessMove): boolean {
     const legalMoves = this.getLegalMoves(move.from);
-    return legalMoves.some(legalMove => 
-      legalMove.to === move.to && legalMove.promotion === move.promotion
+    return legalMoves.some(
+      (legalMove) =>
+        legalMove.to === move.to && legalMove.promotion === move.promotion,
     );
   }
 
@@ -111,12 +130,12 @@ export class ChessEngine {
   // Get move history
   getMoveHistory(): ChessMove[] {
     const history = this.chess.history({ verbose: true });
-    return history.map(move => ({
+    return history.map((move) => ({
       from: move.from,
       to: move.to,
       promotion: move.promotion,
       san: move.san,
-      lan: move.lan
+      lan: move.lan,
     }));
   }
 
@@ -138,38 +157,74 @@ export class ChessEngine {
   // Analyze position (simple evaluation)
   analyzePosition(depth: number = 3): ChessAnalysis {
     const legalMoves = this.getAllLegalMoves();
-    const bestMoves = legalMoves.slice(0, 3); // Simple: just return first 3 moves
-    
+
+    // Sort moves by a simple heuristic (captures first, then by piece value)
+    const sortedMoves = legalMoves.sort((a, b) => {
+      // Prioritize captures
+      const aMoves = this.chess.moves({ square: a.from as any, verbose: true });
+      const bMoves = this.chess.moves({ square: b.from as any, verbose: true });
+      const aIsCapture = aMoves
+        .find((move) => move.to === a.to)
+        ?.flags?.includes("c");
+      const bIsCapture = bMoves
+        .find((move) => move.to === b.to)
+        ?.flags?.includes("c");
+
+      if (aIsCapture && !bIsCapture) return -1;
+      if (!aIsCapture && bIsCapture) return 1;
+
+      // Then by piece value (higher pieces first)
+      const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+      const aPiece = this.chess.get(a.from as any);
+      const bPiece = this.chess.get(b.from as any);
+      const aValue = aPiece
+        ? pieceValues[aPiece.type as keyof typeof pieceValues] || 0
+        : 0;
+      const bValue = bPiece
+        ? pieceValues[bPiece.type as keyof typeof pieceValues] || 0
+        : 0;
+
+      return bValue - aValue;
+    });
+
+    const bestMoves = sortedMoves.slice(0, 3);
+
     // Simple evaluation based on material and position
     const evaluation = this.simpleEvaluation();
-    
+
     return {
       position: this.chess.fen(),
       bestMoves,
       evaluation,
-      depth
+      depth,
     };
   }
 
   // Simple material evaluation
   private simpleEvaluation(): number {
     const pieceValues = {
-      'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 0
+      p: 1,
+      n: 3,
+      b: 3,
+      r: 5,
+      q: 9,
+      k: 0,
     };
-    
+
     let evaluation = 0;
     const board = this.chess.board();
-    
+
     for (let rank = 0; rank < 8; rank++) {
       for (let file = 0; file < 8; file++) {
         const piece = board[rank][file];
         if (piece) {
-          const value = pieceValues[piece.type as keyof typeof pieceValues] || 0;
-          evaluation += piece.color === 'w' ? value : -value;
+          const value =
+            pieceValues[piece.type as keyof typeof pieceValues] || 0;
+          evaluation += piece.color === "w" ? value : -value;
         }
       }
     }
-    
+
     return evaluation;
   }
 
@@ -186,16 +241,16 @@ export class ChessEngine {
   // Get game result
   getGameResult(): string {
     if (this.chess.isCheckmate()) {
-      return this.chess.turn() === 'w' ? 'Black wins' : 'White wins';
+      return this.chess.turn() === "w" ? "Black wins" : "White wins";
     } else if (this.chess.isDraw()) {
-      return 'Draw';
+      return "Draw";
     } else if (this.chess.isStalemate()) {
-      return 'Stalemate';
+      return "Stalemate";
     } else if (this.chess.isThreefoldRepetition()) {
-      return 'Draw by repetition';
+      return "Draw by repetition";
     } else if (this.chess.isInsufficientMaterial()) {
-      return 'Draw by insufficient material';
+      return "Draw by insufficient material";
     }
-    return 'Game in progress';
+    return "Game in progress";
   }
-} 
+}

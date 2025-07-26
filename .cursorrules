@@ -1,0 +1,51 @@
+# Chess MCP Server - Fix TypeScript Setup
+
+## Problem
+The Chess MCP project has unnecessary JavaScript wrapper files when we should be using TypeScript directly with `tsx`.
+
+## Task: Clean Up and Use TypeScript Directly
+
+1. **Delete all unnecessary wrapper files:**
+   - Delete `chess-mcp.js`
+   - Delete `chess-mcp-server.js` 
+   - Delete `chess-mcp.sh`
+   - Delete `test-mcp.js`
+
+2. **Update package.json:**
+   - Remove the `bin` field
+   - Keep existing scripts (`build`, `start`, `dev`, `cli`, `test`)
+
+3. **For MCP clients (Raycast/Claude), use this configuration:**
+   ```json
+   {
+     "mcpServers": {
+       "chess": {
+         "name": "Chess MCP",
+         "type": "stdio",
+         "command": "npx",
+         "args": ["tsx", "/Users/arvid/Private/Chess-MCP/src/index.ts"]
+       }
+     }
+   }
+   ```
+
+4. **Test the MCP server:**
+   ```bash
+   npx tsx src/index.ts
+   ```
+
+## Why This is Better
+- **Direct TypeScript execution** with `tsx` - no need for build step
+- **Cleaner project structure** - no wrapper files
+- **Standard MCP approach** - most MCP servers use `npx tsx`
+- **Better debugging** - direct source execution
+- **Simpler maintenance** - one less build step
+
+## Expected Result
+The MCP server should work directly with `npx tsx src/index.ts` without any JavaScript wrapper files.
+
+## Code Style
+- Use TypeScript for all source files
+- Use `tsx` for direct execution
+- Keep the project structure clean and minimal
+- Follow MCP best practices 

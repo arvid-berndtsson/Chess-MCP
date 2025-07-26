@@ -9,9 +9,15 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "cli": "tsx src/cli.ts",
-    "test": "jest"
+    "test": "jest",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": ["mcp", "chess", "game", "protocol"],
+  "keywords": [
+    "mcp",
+    "chess",
+    "game",
+    "protocol"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
@@ -27,4 +33,4 @@
     "jest": "^29.7.0",
     "@types/jest": "^29.5.0"
   }
-} 
+}

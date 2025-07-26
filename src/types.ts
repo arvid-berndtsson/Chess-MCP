@@ -14,18 +14,18 @@ export interface ChessGame {
   isCheckmate: boolean;
   isDraw: boolean;
   isStalemate: boolean;
-  turn: 'w' | 'b';
+  turn: "w" | "b";
   moveNumber: number;
 }
 
 export interface ChessPiece {
-  type: 'p' | 'n' | 'b' | 'r' | 'q' | 'k';
-  color: 'w' | 'b';
+  type: "p" | "n" | "b" | "r" | "q" | "k";
+  color: "w" | "b";
 }
 
 export interface ChessBoard {
   squares: (ChessPiece | null)[][];
-  turn: 'w' | 'b';
+  turn: "w" | "b";
   castling: {
     w: { k: boolean; q: boolean };
     b: { k: boolean; q: boolean };
@@ -36,7 +36,7 @@ export interface ChessBoard {
 }
 
 export interface GameMode {
-  type: 'human-vs-human' | 'human-vs-ai' | 'ai-vs-ai';
+  type: "human-vs-human" | "human-vs-ai" | "ai-vs-ai";
   aiLevel?: number;
   timeControl?: number; // seconds per player
 }
@@ -55,4 +55,4 @@ export interface ChessStats {
   draws: number;
   averageGameLength: number;
   favoriteOpenings: string[];
-} 
+}
