@@ -171,15 +171,15 @@ export class SmartChessAI {
 
     if (level === 1) {
       return this.chooseSmartRandomMove(
-        this.getLegalMovesForBoard(board, "w"),
+        this.getLegalMovesForBoard(board, board.turn),
         board,
-        "w",
+        board.turn,
       );
     } else if (level === 2) {
       return this.choosePositionalMove(
-        this.getLegalMovesForBoard(board, "w"),
+        this.getLegalMovesForBoard(board, board.turn),
         board,
-        "w",
+        board.turn,
       );
     } else {
       return this.chooseAdvancedMove(board, level);
@@ -229,7 +229,7 @@ export class SmartChessAI {
   }
 
   private chooseAdvancedMove(board: ChessBoard, level: number): ChessMove {
-    const moves = this.getLegalMovesForBoard(board, "w");
+    const moves = this.getLegalMovesForBoard(board, board.turn);
     if (moves.length === 0) return moves[0];
 
     // Check opening book first
@@ -294,7 +294,7 @@ export class SmartChessAI {
     }
 
     if (depth === 0) {
-      return this.quiescenceSearch(board, alpha, beta);
+      return this.quiescenceSearch(board, alpha, beta, 0, isMaximizing ? "w" : "b");
     }
 
     const legalMoves = this.getLegalMovesForBoard(
@@ -358,6 +358,7 @@ export class SmartChessAI {
     alpha: number,
     beta: number,
     depth: number = 0,
+    color: "w" | "b" = "w",
   ): number {
     // Limit quiescence search depth to prevent infinite recursion
     if (depth > 10) {
@@ -374,12 +375,12 @@ export class SmartChessAI {
       alpha = standPat;
     }
 
-    const captures = this.getCaptureMoves(board);
+    const captures = this.getCaptureMoves(board, color);
 
     for (const capture of captures) {
       const boardCopy = this.copyBoard(board);
       this.makeMoveOnBoard(boardCopy, capture);
-      const score = -this.quiescenceSearch(boardCopy, -beta, -alpha, depth + 1);
+      const score = -this.quiescenceSearch(boardCopy, -beta, -alpha, depth + 1, color === "w" ? "b" : "w");
 
       if (score >= beta) {
         return beta;
@@ -393,8 +394,8 @@ export class SmartChessAI {
     return alpha;
   }
 
-  private getCaptureMoves(board: any): ChessMove[] {
-    const allMoves = this.getLegalMovesForBoard(board, "w");
+  private getCaptureMoves(board: any, color: "w" | "b"): ChessMove[] {
+    const allMoves = this.getLegalMovesForBoard(board, color);
     return allMoves.filter((move) => {
       const targetSquare = this.getPieceAt(board, move.to);
       return targetSquare !== null;
@@ -1051,7 +1052,7 @@ export class SmartChessAI {
     if (this.openingBook[fen as keyof typeof this.openingBook]) {
       const moves = this.openingBook[fen as keyof typeof this.openingBook];
       for (const moveStr of moves) {
-        const move = this.getLegalMovesForBoard(board, "w").find(
+        const move = this.getLegalMovesForBoard(board, board.turn).find(
           (m) => `${m.from}${m.to}` === moveStr,
         );
         if (move) {
