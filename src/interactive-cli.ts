@@ -2,12 +2,14 @@ import readline from 'readline';
 import { ChessEngine } from './chess-engine.js';
 import { ChessUI } from './chess-ui.js';
 import { ChessAI } from './chess-ai.js';
+import { SmartChessAI } from './smart-chess-ai.js';
 import type { GameMode } from './types.js';
 
 export class InteractiveCLI {
   private chessEngine: ChessEngine;
   private chessUI: ChessUI;
   private chessAI: ChessAI;
+  private smartAI: SmartChessAI;
   private gameMode: GameMode = { type: 'human-vs-human' };
   private rl: readline.Interface;
 
@@ -15,6 +17,7 @@ export class InteractiveCLI {
     this.chessEngine = new ChessEngine();
     this.chessUI = new ChessUI();
     this.chessAI = new ChessAI(1);
+    this.smartAI = new SmartChessAI(1);
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
@@ -260,6 +263,7 @@ export class InteractiveCLI {
 
     this.gameMode = { type: mode, aiLevel };
     this.chessAI.setLevel(aiLevel);
+    this.smartAI.setLevel(aiLevel);
     this.chessUI.displaySuccess(`Game mode set to: ${mode} (AI level: ${aiLevel})`);
   }
 
@@ -273,7 +277,8 @@ export class InteractiveCLI {
 
     const board = this.chessEngine.getBoard();
     const gameState = this.chessEngine.getGameState();
-    const aiMove = this.chessAI.chooseMove(legalMoves, board.squares, gameState.turn);
+    // Use smart AI for better moves
+    const aiMove = this.smartAI.chooseMove(legalMoves, board.squares, gameState.turn);
 
     const success = this.chessEngine.makeMove(aiMove);
     
